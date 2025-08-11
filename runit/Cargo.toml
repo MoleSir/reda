@@ -1,0 +1,12 @@
+[package]
+name = "runit"
+version = { workspace = true }
+edition = { workspace = true }
+description = { workspace = true }
+license = { workspace = true }
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+paste = { workspace = true }
+runit-macros = { path = "./macros" }
