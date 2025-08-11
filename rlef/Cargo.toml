@@ -1,0 +1,11 @@
+[package]
+name = "rlef"
+version = { workspace = true }
+edition = { workspace = true }
+description = { workspace = true }
+license = { workspace = true }
+
+[dependencies]
+derive_builder = { workspace = true }
+nom = { workspace = true }
+thiserror = { workspace = true }

@@ -7,6 +7,7 @@ EDA toolkit in Rust
 
 - [runit](./runit): physical units
 - [rgds](./rgds): GDSII file library
+- [rlef](./rlef/): LEF (Library Exchange Format) file library
 
 
 ## License
