@@ -1,9 +1,9 @@
 [workspace]
 members = [
-    "runit",
-    "rgds",
-    "rlef",
-    "rspice",
+    "reda-unit",
+    "reda-gds",
+    "reda-lef",
+    "reda-spice",
 ]
 
 [workspace.package]
@@ -13,9 +13,9 @@ description = "EDA toolkit in Rust"
 license = "MIT"
 
 [workspace.dependencies]
-runit = { path = "./runit", package = "runit", version = "0.1.0" }
-rgds = { path = "./rgds", package = "rgds", version = "0.1.0" }
-rlef = { path = "./rlef", package = "rlef", version = "0.1.0" }
+reda-unit = { path = "./reda-unit", package = "reda-unit", version = "0.1.0" }
+reda-gds = { path = "./reda-gds", package = "reda-gds", version = "0.1.0" }
+reda-lef = { path = "./reda-lef", package = "reda-lef", version = "0.1.0" }
 
 serde = "1.0.219"
 paste = "1.0"

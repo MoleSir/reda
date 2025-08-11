@@ -5,10 +5,10 @@ EDA toolkit in Rust
 
 ## Tools
 
-- [runit](./runit): physical units
-- [rgds](./rgds): GDSII file library
-- [rlef](./rlef/): LEF (Library Exchange Format) file library
-- [rspice](./rspice/): Spice simulate and parse library
+- [reda-unit](./reda-unit): physical units
+- [reda-gds](./reda-gds): GDSII file library
+- [reda-lef](./reda-lef/): LEF (Library Exchange Format) file library
+- [reda-spice](./reda-spice/): Spice simulate and parse library
 
 
 ## License

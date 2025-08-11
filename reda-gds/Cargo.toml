@@ -1,0 +1,12 @@
+[package]
+name = "reda-gds"
+version = { workspace = true }
+edition = { workspace = true }
+description = { workspace = true }
+license = { workspace = true }
+
+[dependencies]
+chrono = { workspace = true }
+derive_builder = { workspace = true }
+thiserror = { workspace = true }
+clap = { workspace = true }
