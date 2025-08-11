@@ -1,0 +1,21 @@
+[package]
+name = "rspice"
+version = { workspace = true }
+edition = { workspace = true }
+description = { workspace = true }
+license = { workspace = true }
+
+[dependencies]
+anyhow = { workspace = true }
+byteorder = { workspace = true }
+derive_builder = { workspace = true }
+libc = { workspace = true }
+libloading = { workspace = true }
+log = { workspace = true }
+num-complex = { workspace = true }
+regex = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+nom = { workspace = true }
+runit = { workspace = true }
+plotters = { workspace = true }
