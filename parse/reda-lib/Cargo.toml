@@ -1,0 +1,15 @@
+[package]
+name = "reda-lib"
+version = "0.7.1"
+edition = { workspace = true }
+repository = "https://github.com/MoleSir/reda-lib"
+description = "Liberty file library"
+license = "MIT"
+
+[dependencies]
+nom = { workspace = true }
+derive_builder = { workspace = true }
+thiserror = { workspace = true }
+reda-lib-macro = { workspace = true }
+paste = { workspace = true }
+strum = { workspace = true, features = ["derive"] }

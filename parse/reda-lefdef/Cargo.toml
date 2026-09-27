@@ -1,0 +1,16 @@
+[package]
+name = "reda-lefdef"
+version = "0.0.1"
+edition = { workspace = true }
+description = "Lef/Def file library"
+repository = "https://github.com/MoleSir/reda-lefdef.git"
+license = "MIT OR Apache-2.0"
+
+
+[dependencies]
+libc = { workspace = true }
+paste = { workspace = true }
+thiserror = { workspace = true }
+reda-geometry = { workspace = true }
+derive-new = { workspace = true }
+

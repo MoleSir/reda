@@ -1,0 +1,10 @@
+[package]
+name = "reda-tokenize"
+version = "0.1.0"
+edition = { workspace = true }
+description = "general tokenize library"
+repository = "https://github.com/MoleSir/reda-tokenize.git"
+license = "MIT"
+
+[dependencies]
+itertools = { workspace = true }

@@ -1,0 +1,14 @@
+[package]
+name = "reda-unit"
+version = "0.2.1"
+description = "physical units"
+repository = "https://github.com/MoleSir/reda-unit.git"
+license = "MIT"
+edition = { workspace = true }
+
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+paste = { workspace = true }
+reda-unit-macros = { workspace = true }

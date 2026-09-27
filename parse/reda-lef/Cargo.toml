@@ -1,0 +1,19 @@
+[package]
+name = "reda-lef"
+version = "0.4.0"
+edition = { workspace = true }
+description = "Lef file library"
+repository = "https://github.com/MoleSir/reda-lef.git"
+license = "MIT OR Apache-2.0"
+build = "build.rs"
+
+
+[dependencies]
+libc = { workspace = true }
+paste = { workspace = true }
+thiserror = { workspace = true }
+reda-geometry = { workspace = true }
+derive-new = { workspace = true }
+
+[build-dependencies]
+cc = { workspace = true }

@@ -1,0 +1,23 @@
+[package]
+name = "reda-spsim"
+version = "0.2.1"
+edition = { workspace = true }
+description = "Spice simulate library"
+repository = "https://github.com/MoleSir/reda-spsim"
+license = "MIT"
+
+[dependencies]
+anyhow = { workspace = true }
+byteorder = { workspace = true }
+derive_builder = { workspace = true }
+libc = { workspace = true }
+libloading = { workspace = true }
+log = { workspace = true }
+num-complex = { workspace = true }
+regex = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+plotters = { workspace = true }
+
+reda-unit = { workspace = true }
+reda-sp = { workspace = true }

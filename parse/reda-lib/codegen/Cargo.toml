@@ -1,0 +1,16 @@
+[package]
+name = "reda-lib-macro"
+version = "0.2.1"
+edition = { workspace = true }
+repository = "https://github.com/MoleSir/reda-lib"
+description = "Liberty file library"
+keywords = ["eda", "liberty", "database", "parser"]
+license = "MIT"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = { workspace = true }
+syn = { workspace = true, features = ["full"] }
+proc-macro2 = { workspace = true }

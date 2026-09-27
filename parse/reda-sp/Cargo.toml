@@ -1,0 +1,13 @@
+[package]
+name = "reda-sp"
+version = "0.2.1"
+edition = { workspace = true }
+description = "Spice file parse library"
+repository = "https://github.com/MoleSir/reda-sp"
+license = "MIT"
+
+[dependencies]
+nom = { workspace = true }
+reda-unit = { workspace = true }
+derive_builder = { workspace = true }
+thiserror = { workspace = true }

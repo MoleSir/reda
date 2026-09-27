@@ -1,0 +1,16 @@
+[package]
+name = "reda-gds"
+version = "0.2.2"
+description = "GDSII file library"
+repository = "https://github.com/MoleSir/reda-gds.git"
+license = "MIT"
+edition = { workspace = true }
+
+
+[dependencies]
+chrono = { workspace = true }
+derive_builder = { workspace = true }
+thiserror = { workspace = true }
+clap = { workspace = true, features = ["derive"]  }
+reda-geometry = { workspace = true }
+ 

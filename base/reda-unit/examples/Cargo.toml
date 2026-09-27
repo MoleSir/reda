@@ -1,0 +1,6 @@
+[workspace]
+members = [ 
+    "complex", 
+    "number",
+    "units"
+]

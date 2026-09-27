@@ -1,0 +1,13 @@
+[package]
+name = "reda-oasis"
+version = "0.1.0"
+edition = "2024"
+description = "OASIS file library"
+repository = "https://github.com/MoleSir/reda-oasis.git"
+license = "MIT"
+
+[dependencies]
+num-bigint = "0.4.6"
+num-traits = "0.2.19"
+rand = "0.9.2"
+thiserror = "2.0.17"
