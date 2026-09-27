@@ -80,7 +80,7 @@ pub fn pretty_print_error(input: &str, e: VerboseError<&str>) -> String {
     out
 }
 
-pub fn ast(input: &str) -> NomResult<LibAst> {
+pub fn ast(input: &str) -> NomResult<'_, LibAst> {
     context(
         "ast",
         alt((
@@ -91,7 +91,7 @@ pub fn ast(input: &str) -> NomResult<LibAst> {
 }
 
 /// 单行注释: // ...
-fn line_comment(input: &str) -> NomResult<()> {
+fn line_comment(input: &str) -> NomResult<'_, ()> {
     value(
         (),
         preceded(tag("//"), alt((not_line_ending, eof))),
@@ -99,12 +99,12 @@ fn line_comment(input: &str) -> NomResult<()> {
 }
 
 /// 多行注释: /* ... */
-fn block_comment(input: &str) -> NomResult<()> {
+fn block_comment(input: &str) -> NomResult<'_, ()> {
     value((), delimited(tag("/*"), take_until("*/"), tag("*/")))(input)
 }
 
 #[allow(unused)]
-fn comment(input: &str) -> NomResult<&str> {
+fn comment(input: &str) -> NomResult<'_, &str> {
     context(
         "comment",
         recognize(delimited(tag("/*"), take_until("*/"), tag("*/"))),
@@ -112,7 +112,7 @@ fn comment(input: &str) -> NomResult<&str> {
 }
 
 /// 跳过空白
-fn ws0(input: &str) -> NomResult<()> {
+fn ws0(input: &str) -> NomResult<'_, ()> {
     value(
         (),
         many0(value((), multispace1)),
@@ -120,7 +120,7 @@ fn ws0(input: &str) -> NomResult<()> {
 }
 
 /// 跳过空白或注释
-fn unused0(input: &str) -> NomResult<()> {
+fn unused0(input: &str) -> NomResult<'_, ()> {
     value(
         (),
         many0(alt((
@@ -184,7 +184,7 @@ where
 
 // typical string
 // ie. abcdef, de234, jkl_mn, ...
-pub fn identifier(input: &str) -> NomResult<&str> {
+pub fn identifier(input: &str) -> NomResult<'_, &str> {
     context(
         "identifier",
         recognize(pair(
@@ -195,7 +195,7 @@ pub fn identifier(input: &str) -> NomResult<&str> {
 }
 
 /// integer parser, supports sign like +42 or -3
-pub fn integer(input: &str) -> NomResult<i32> {
+pub fn integer(input: &str) -> NomResult<'_, i32> {
     context(
         "integer",
         map_res(
@@ -214,25 +214,25 @@ pub fn integer(input: &str) -> NomResult<i32> {
 }
 
 /// signed floating-point number parser
-pub fn float(input: &str) -> NomResult<f64> {
+pub fn float(input: &str) -> NomResult<'_, f64> {
     context(
         "float",
         double
     )(input)
 }
 
-pub fn boolean(input: &str) -> NomResult<bool> {
+pub fn boolean(input: &str) -> NomResult<'_, bool> {
     map_res(alpha1, |s: &str| s.parse::<bool>())(input)
 }
 
-pub fn quoted_string(input: &str) -> NomResult<&str> {
+pub fn quoted_string(input: &str) -> NomResult<'_, &str> {
     context(
         "quoted string",
         preceded(char('\"'), cut(terminated(is_not("\""), char('\"')))),
     )(input)
 }
 
-pub fn quoted_floats(input: &str) -> NomResult<Vec<f64>> {
+pub fn quoted_floats(input: &str) -> NomResult<'_, Vec<f64>> {
     context(
         "quoted floats",
         delimited(
@@ -246,7 +246,7 @@ pub fn quoted_floats(input: &str) -> NomResult<Vec<f64>> {
     )(input)
 }
 
-pub fn ast_value(input: &str) -> NomResult<LibValue> {
+pub fn ast_value(input: &str) -> NomResult<'_, LibValue> {
     context(
         "ast value", 
         alt((
@@ -258,7 +258,7 @@ pub fn ast_value(input: &str) -> NomResult<LibValue> {
     )(input)
 }
 
-pub fn ast_values(input: &str) -> NomResult<Vec<LibValue>> {
+pub fn ast_values(input: &str) -> NomResult<'_, Vec<LibValue>> {
     context(
         "ast values", 
         delimited(
@@ -286,7 +286,7 @@ pub fn ast_values(input: &str) -> NomResult<Vec<LibValue>> {
     )(input)
 }
 
-pub fn simple_attr(input: &str) -> NomResult<LibAst> {
+pub fn simple_attr(input: &str) -> NomResult<'_, LibAst> {
     context(
         "simple attr",
         move |input| {
@@ -300,7 +300,7 @@ pub fn simple_attr(input: &str) -> NomResult<LibAst> {
     )(input)
 }
 
-pub fn complex_attr(input: &str) -> NomResult<LibAst> {
+pub fn complex_attr(input: &str) -> NomResult<'_, LibAst> {
     context(
         "complex attr",
         map(
@@ -315,14 +315,14 @@ pub fn complex_attr(input: &str) -> NomResult<LibAst> {
     )(input)
 }
 
-pub fn attr(input: &str) -> NomResult<LibAst> {
+pub fn attr(input: &str) -> NomResult<'_, LibAst> {
     context(
         "attr", 
         alt((simple_attr, complex_attr))
     )(input)
 }
 
-pub fn group(input: &str) -> NomResult<LibAst> {
+pub fn group(input: &str) -> NomResult<'_, LibAst> {
     context(
         "group",
         move |input| {
@@ -346,14 +346,14 @@ pub fn group(input: &str) -> NomResult<LibAst> {
     )(input)
 }
 
-pub fn group_items1(input: &str) -> NomResult<Vec<LibAst>> {
+pub fn group_items1(input: &str) -> NomResult<'_, Vec<LibAst>> {
     context(
         "group items1",
         many1(pre_unused(ast))
     )(input)
 }
 
-pub fn group_items0(input: &str) -> NomResult<Vec<LibAst>> {
+pub fn group_items0(input: &str) -> NomResult<'_, Vec<LibAst>> {
     context(
         "group items0",
         many0(pre_unused(ast))

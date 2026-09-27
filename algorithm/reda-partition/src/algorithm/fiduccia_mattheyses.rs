@@ -1,10 +1,11 @@
-use std::{collections::{HashMap, HashSet}, hash::Hash, i64};
-use crate::graph::{Edge, Graph, Vertex};
+use std::{collections::HashSet, hash::Hash};
+use crate::graph::Graph;
 use super::BisectionGraphPartition;
 
 pub struct FiducciaMattheyses;
 
 struct FiducciaMattheysesImpl<'a, I> {
+    #[allow(dead_code)] // 待 partition() 实现后使用
     graph: &'a Graph<I>,
     part_a: HashSet<I>,
     part_b: HashSet<I>,

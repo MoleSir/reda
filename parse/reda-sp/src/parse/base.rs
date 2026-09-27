@@ -38,7 +38,7 @@ impl<T, E> ToFailure<T, E> for Result<T, nom::Err<E>> {
 // }
 
 /// '\n' is not space, but '\n+' is a space!
-pub fn smart_space0(input: &str) -> NomResult<()> {
+pub fn smart_space0(input: &str) -> NomResult<'_, ()> {
     let mut i = input;
     while !i.is_empty() {
         let bytes = i.as_bytes();
@@ -86,8 +86,8 @@ macro_rules! wrap_parser {
 
 // typical string
 // ie. abcdef, de234, jkl_mn, ...
-pub fn identifier(input: &str) -> NomResult<&str> {
-    pub fn _identifier(input: &str) -> NomResult<&str> {
+pub fn identifier(input: &str) -> NomResult<'_, &str> {
+    pub fn _identifier(input: &str) -> NomResult<'_, &str> {
         recognize(pair(
             alt((alpha1, tag("_"))),
             many0(alt((alphanumeric1, tag("_"), tag(".")))),
@@ -98,8 +98,8 @@ pub fn identifier(input: &str) -> NomResult<&str> {
 
 // node string
 // ie. abcdef, de234, jkl_mn, ...
-pub fn node(input: &str) -> NomResult<&str> {
-    pub fn _node(input: &str) -> NomResult<&str> {
+pub fn node(input: &str) -> NomResult<'_, &str> {
+    pub fn _node(input: &str) -> NomResult<'_, &str> {
         recognize(many1(alt((alphanumeric1, tag("_"), tag(".")))))(input)
     }
     wrap_parser!(_node(input), input, "node")
@@ -107,8 +107,8 @@ pub fn node(input: &str) -> NomResult<&str> {
 
 // unsigned integer number
 // ie, 100, 350
-pub fn unsigned_int(input: &str) -> NomResult<u32> {
-    pub fn _unsigned_int(input: &str) -> NomResult<u32> {
+pub fn unsigned_int(input: &str) -> NomResult<'_, u32> {
+    pub fn _unsigned_int(input: &str) -> NomResult<'_, u32> {
         let str_parser = recognize(digit1);
         map_res(
             str_parser,
@@ -120,8 +120,8 @@ pub fn unsigned_int(input: &str) -> NomResult<u32> {
 
 // parse signed floating number
 // The following is modified from the Python parser by Valentin Lorentz (ProgVal).
-pub fn float(input: &str) -> NomResult<f64> {
-    pub fn _float(input: &str) -> NomResult<f64> {
+pub fn float(input: &str) -> NomResult<'_, f64> {
+    pub fn _float(input: &str) -> NomResult<'_, f64> {
         map_res(
             alt((
                 // Case one: 42. and 42.42
@@ -134,12 +134,12 @@ pub fn float(input: &str) -> NomResult<f64> {
     wrap_parser!(_float(input), input, "float")
 }
 
-fn decimal(input: &str) -> NomResult<&str> {
+fn decimal(input: &str) -> NomResult<'_, &str> {
     recognize(many1(terminated(one_of("0123456789"), many0(char('_')))))(input)
 }
 
-pub fn number(input: &str) -> NomResult<Number> {
-    pub fn _number(input: &str) -> NomResult<Number> {
+pub fn number(input: &str) -> NomResult<'_, Number> {
+    pub fn _number(input: &str) -> NomResult<'_, Number> {
         let (input, value) = float(input)?;
         let (input, suffix) = opt(alt((
             tag_no_case("g").map(|_| Suffix::Mega),
@@ -162,8 +162,8 @@ pub fn number(input: &str) -> NomResult<Number> {
     wrap_parser!(_number(input), input, "expect number")
 }
 
-pub fn time_number(input: &str) -> NomResult<Time> {
-    pub fn _time_number(input: &str) -> NomResult<Time> {
+pub fn time_number(input: &str) -> NomResult<'_, Time> {
+    pub fn _time_number(input: &str) -> NomResult<'_, Time> {
         let (input, value) = float(input)?;
         let (input, suffix) = opt(alt((
             tag_no_case("gs").map(|_| Suffix::Mega),
@@ -194,8 +194,8 @@ pub fn time_number(input: &str) -> NomResult<Time> {
     wrap_parser!(_time_number(input), input, "expect time number")
 }
 
-pub fn voltage_number(input: &str) -> NomResult<Voltage> {
-    pub fn _voltage_number(input: &str) -> NomResult<Voltage> {
+pub fn voltage_number(input: &str) -> NomResult<'_, Voltage> {
+    pub fn _voltage_number(input: &str) -> NomResult<'_, Voltage> {
         let (input, value) = float(input)?;
         let (input, suffix) = opt(alt((
             tag_no_case("gv").map(|_| Suffix::Mega),
@@ -226,8 +226,8 @@ pub fn voltage_number(input: &str) -> NomResult<Voltage> {
     wrap_parser!(_voltage_number(input), input, "expect voltage number")
 }
 
-pub fn current_number(input: &str) -> NomResult<Current> {
-    pub fn _current_number(input: &str) -> NomResult<Current> {
+pub fn current_number(input: &str) -> NomResult<'_, Current> {
+    pub fn _current_number(input: &str) -> NomResult<'_, Current> {
         let (input, value) = float(input)?;
         let (input, suffix) = opt(alt((
             tag_no_case("gA").map(|_| Suffix::Mega),
@@ -258,8 +258,8 @@ pub fn current_number(input: &str) -> NomResult<Current> {
     wrap_parser!(_current_number(input), input, "expect current number")
 }
 
-pub fn resistance_number(input: &str) -> NomResult<Resistance> {
-    pub fn _resistance_number(input: &str) -> NomResult<Resistance> {
+pub fn resistance_number(input: &str) -> NomResult<'_, Resistance> {
+    pub fn _resistance_number(input: &str) -> NomResult<'_, Resistance> {
         let (input, value) = float(input)?;
         let (input, suffix) = opt(alt((
             tag_no_case("gΩ").map(|_| Suffix::Mega),
@@ -290,8 +290,8 @@ pub fn resistance_number(input: &str) -> NomResult<Resistance> {
     wrap_parser!(_resistance_number(input), input, "expect resistance number")
 }
 
-pub fn capacitance_number(input: &str) -> NomResult<Capacitance> {
-    pub fn _capacitance_number(input: &str) -> NomResult<Capacitance> {
+pub fn capacitance_number(input: &str) -> NomResult<'_, Capacitance> {
+    pub fn _capacitance_number(input: &str) -> NomResult<'_, Capacitance> {
         let (input, value) = float(input)?;
         let (input, suffix) = opt(alt((
             tag_no_case("gF").map(|_| Suffix::Mega),
@@ -322,8 +322,8 @@ pub fn capacitance_number(input: &str) -> NomResult<Capacitance> {
     wrap_parser!(_capacitance_number(input), input, "expect capacitance number")
 }
 
-pub fn inductance_number(input: &str) -> NomResult<Inductance> {
-    pub fn _inductance_number(input: &str) -> NomResult<Inductance> {
+pub fn inductance_number(input: &str) -> NomResult<'_, Inductance> {
+    pub fn _inductance_number(input: &str) -> NomResult<'_, Inductance> {
         let (input, value) = float(input)?;
         let (input, suffix) = opt(alt((
             tag_no_case("gH").map(|_| Suffix::Mega),
@@ -354,18 +354,18 @@ pub fn inductance_number(input: &str) -> NomResult<Inductance> {
     wrap_parser!(_inductance_number(input), input, "expect inductance number")
 }
 
-pub fn frequency_number(input: &str) -> NomResult<Frequency> {
+pub fn frequency_number(input: &str) -> NomResult<'_, Frequency> {
     let (input, n) = number(input)?;
     Ok((input, n.into()))
 }
 
-pub fn angle_number(input: &str) -> NomResult<Angle> {
+pub fn angle_number(input: &str) -> NomResult<'_, Angle> {
     let (input, n) = number(input)?;
     Ok((input, n.into()))
 }
 
-pub fn comment(input: &str) -> NomResult<&str> {
-    pub fn _comment(input: &str) -> NomResult<&str> {
+pub fn comment(input: &str) -> NomResult<'_, &str> {
+    pub fn _comment(input: &str) -> NomResult<'_, &str> {
         map(
         terminated(
                 preceded(

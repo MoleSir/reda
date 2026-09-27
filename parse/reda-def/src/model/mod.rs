@@ -1,10 +1,10 @@
 mod base;
+pub use base::*;
 
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
 
-use base::{DefOrient, DefPinDirection, DefPropertyType, DefPropertyValue};
 use reda_geometry::shape::{Point, PointList, Polyline, Rect};
 
 use crate::read::DefReadError;
@@ -962,7 +962,10 @@ pub struct ViaGeometry {
 }
 
 /// Rule for via creation.
+///
+/// TODO: `num_cut_rows`, `num_cut_cols`, `origin`, `offset` and `cut_pattern` are not read yet.
 #[derive(Clone, Debug)]
+#[allow(dead_code)]
 pub struct ViaRule {
     /// Width and height of the via cut.
     pub cut_size: (Coord, Coord),

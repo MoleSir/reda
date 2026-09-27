@@ -6,7 +6,7 @@ use crate::model::{AnalysisType, FindWhenCondition, EdgeType, MeasureBasicStat, 
 use super::{hws, identifier, number, time_number, unsigned_int, NomResult, ToFailure};
 
 /// .MEAS TRAN rise ... 
-pub fn measure_command(input: &str) -> NomResult<MeasureCommand> {
+pub fn measure_command(input: &str) -> NomResult<'_, MeasureCommand> {
     context("measure_command", |input| {
         let (input, _) = context("keyword", hws(tag_no_case(".MEAS")))(input)?;
         let (input, analysis) = context("analysis_type", hws(analysis_type))(input).to_failure()?;
@@ -54,7 +54,7 @@ fn measure_find_when<'a>(input: &'a str, name: &'a str, analysis: AnalysisType) 
 
 
 /// V(1) VAL=.2 RISE=1
-fn trig_targ_condition(input: &str) -> NomResult<TrigTargCondition> {
+fn trig_targ_condition(input: &str) -> NomResult<'_, TrigTargCondition> {
     let (input, variable) = hws(output_variable)(input)?;
     let (input, _) = hws(tag_no_case("VAL="))(input)?;
     let (input, value) = hws(number)(input)?;
@@ -76,7 +76,7 @@ fn trig_targ_condition(input: &str) -> NomResult<TrigTargCondition> {
     ))
 }
 
-fn measure_function(input: &str) -> NomResult<MeasureFunction> {
+fn measure_function(input: &str) -> NomResult<'_, MeasureFunction> {
     map(
         hws(alt((
             tag_no_case("AVG"),
@@ -100,7 +100,7 @@ fn measure_function(input: &str) -> NomResult<MeasureFunction> {
     )(input)
 }
 
-fn finwhen_condition(input: &str) -> NomResult<FindWhenCondition> {
+fn finwhen_condition(input: &str) -> NomResult<'_, FindWhenCondition> {
     let (input, variable) = hws(output_variable)(input)?;
     let (input, _) = hws(tag("="))(input)?;
     let (input, value) = hws(number)(input)?;
@@ -108,7 +108,7 @@ fn finwhen_condition(input: &str) -> NomResult<FindWhenCondition> {
     Ok((input, FindWhenCondition { variable, value }))
 }
 
-fn output_variable(input: &str) -> NomResult<OutputVariable> {
+fn output_variable(input: &str) -> NomResult<'_, OutputVariable> {
     let (input, kind) = hws(alt((tag_no_case("V"), tag_no_case("I"))))(input)?;
 
     let (input, var) = hws(delimited(
@@ -144,7 +144,7 @@ fn output_variable(input: &str) -> NomResult<OutputVariable> {
     }
 }
 
-fn analysis_type(input: &str) -> NomResult<AnalysisType> {
+fn analysis_type(input: &str) -> NomResult<'_, AnalysisType> {
     map(
         hws(alt((tag_no_case("TRAN"), tag_no_case("AC"), tag_no_case("DC")))),
         |s: &str| match &s.to_ascii_uppercase()[..] {

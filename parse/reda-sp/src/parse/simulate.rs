@@ -5,7 +5,7 @@ use nom::combinator::map;
 use crate::model::{AcCommand, AcSweepType, DcCommand, SimCommand, TranCommand};
 use super::{frequency_number, hws, identifier, time_number, unsigned_int, voltage_number, NomResult, ToFailure};
 
-pub fn sim_command(input: &str) -> NomResult<SimCommand> {
+pub fn sim_command(input: &str) -> NomResult<'_, SimCommand> {
     alt((
         map(op_command, |_| SimCommand::Op),
         map(dc_command, SimCommand::Dc),
@@ -15,7 +15,7 @@ pub fn sim_command(input: &str) -> NomResult<SimCommand> {
 }
 
 /// .OP
-pub fn op_command(input: &str) -> NomResult<()> {
+pub fn op_command(input: &str) -> NomResult<'_, ()> {
     context("dc_command", |input| -> NomResult<()> {
         let (input, _) = context("keyword", hws(tag_no_case(".OP")))(input)?;
         Ok((input, ()))
@@ -23,7 +23,7 @@ pub fn op_command(input: &str) -> NomResult<()> {
 }
 
 /// .DC SRCname START STOP STEP
-pub fn dc_command(input: &str) -> NomResult<DcCommand> {
+pub fn dc_command(input: &str) -> NomResult<'_, DcCommand> {
     context("dc_command", |input| {
         let (input, _) = context("keyword", hws(tag_no_case(".DC")))(input)?;
         let (input, src_name) = context("source_name", hws(identifier))(input).to_failure()?;
@@ -41,7 +41,7 @@ pub fn dc_command(input: &str) -> NomResult<DcCommand> {
 }
 
 /// .AC LIN NP FSTART FSTOP
-pub fn ac_command(input: &str) -> NomResult<AcCommand> {
+pub fn ac_command(input: &str) -> NomResult<'_, AcCommand> {
     context("ac_command", |input| {
         let (input, _) = context("keyword", hws(tag_no_case(".AC")))(input)?;
         let (input, sweep_type_str) = context("sweep_type", hws(alt((
@@ -70,7 +70,7 @@ pub fn ac_command(input: &str) -> NomResult<AcCommand> {
 }
 
 /// .TRAN TSTEP TSTOP <TSTART <TMAX>> <UIC>
-pub fn tran_command(input: &str) -> NomResult<TranCommand> {
+pub fn tran_command(input: &str) -> NomResult<'_, TranCommand> {
     context("tran_command", |input| {
         let (input, _) = context("keyword", hws(tag_no_case(".TRAN")))(input)?;
         let (input, t_step) = context("t_step", hws(time_number))(input).to_failure()?;

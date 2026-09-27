@@ -8,7 +8,7 @@ use super::base::{hws, identifier, integer, unsigned_int, NomResult};
 
 macro_rules! ident_or_range_impl {
     ($t:tt) => {
-        fn ident_or_range(input: &str) -> NomResult<$t> {
+        fn ident_or_range(input: &str) -> NomResult<'_, $t> {
             let (input, name) = identifier(input)?;
         
             // 尝试解析 [ ... ]
@@ -35,23 +35,23 @@ macro_rules! ident_or_range_impl {
     };
 }
 
-pub fn expr(input: &str) -> NomResult<Expr> {
+pub fn expr(input: &str) -> NomResult<'_, Expr> {
     binop(input, 0)
 }
 
-pub fn var_expr(input: &str) -> NomResult<VarExpr> {
+pub fn var_expr(input: &str) -> NomResult<'_, VarExpr> {
     ident_or_range_impl!(VarExpr);
     hws(ident_or_range)(input)
 }
 
-pub fn const_expr(input: &str) -> NomResult<ConstExpr> {
+pub fn const_expr(input: &str) -> NomResult<'_, ConstExpr> {
     hws(alt((
         map(integer, |n| ConstExpr::Number(n as i32)),
         map(value, |v| ConstExpr::Value(v)),
     )))(input)
 }
 
-pub fn atom(input: &str) -> NomResult<Expr> {
+pub fn atom(input: &str) -> NomResult<'_, Expr> {
     ident_or_range_impl!(Expr);
     hws(alt((
         ident_or_range,
@@ -61,7 +61,7 @@ pub fn atom(input: &str) -> NomResult<Expr> {
     )))(input)
 }
 
-pub fn unary(input: &str) -> NomResult<Expr> {
+pub fn unary(input: &str) -> NomResult<'_, Expr> {
     hws(alt((
         map(preceded(char('!'), unary), |e| {
             Expr::UnaryOp {
@@ -89,7 +89,7 @@ fn precedence(op: &BinOpKind) -> u8 {
     }
 }
 
-fn op(input: &str) -> NomResult<BinOpKind> {
+fn op(input: &str) -> NomResult<'_, BinOpKind> {
     hws(alt((
         map(tag("=="), |_| BinOpKind::Eq),
         map(tag("!="), |_| BinOpKind::Neq),
@@ -103,7 +103,7 @@ fn op(input: &str) -> NomResult<BinOpKind> {
     )))(input)
 }
 
-fn binop(input: &str, min_prec: u8) -> NomResult<Expr> {
+fn binop(input: &str, min_prec: u8) -> NomResult<'_, Expr> {
     let (mut input, mut lhs) = unary(input)?;
     loop {
         let (next_input, op) = match op(input) {
@@ -131,7 +131,7 @@ fn binop(input: &str, min_prec: u8) -> NomResult<Expr> {
     Ok((input, lhs))
 }
 
-pub fn value(input: &str) -> NomResult<Value> {
+pub fn value(input: &str) -> NomResult<'_, Value> {
     let (input, len) = hws(unsigned_int)(input)?;
     let (input, _) = char('\'')(input)?;
     let (input, kind) = alt((
@@ -158,28 +158,28 @@ pub fn value(input: &str) -> NomResult<Value> {
     ))
 }
 
-pub fn bin_value_bits(input: &str) -> NomResult<String> {
+pub fn bin_value_bits(input: &str) -> NomResult<'_, String> {
     map(
         take_while1(|c: char| matches!(c, '0' | '1' | 'x' | 'X' | 'z' | 'Z' | '_')),
         |s: &str| s.to_string(),
     )(input)
 }
 
-pub fn dec_value_bits(input: &str) -> NomResult<String> {
+pub fn dec_value_bits(input: &str) -> NomResult<'_, String> {
     map(
         take_while1(|c: char| matches!(c, '0'..='9' | '_')),
         |s: &str| s.to_string(),
     )(input)
 }
 
-pub fn oct_value_bits(input: &str) -> NomResult<String> {
+pub fn oct_value_bits(input: &str) -> NomResult<'_, String> {
     map(
         take_while1(|c: char| matches!(c, '0'..='7' | 'x' | 'X' | 'z' | 'Z' | '_')),
         |s: &str| s.to_string(),
     )(input)
 }
 
-pub fn hex_value_bits(input: &str) -> NomResult<String> {
+pub fn hex_value_bits(input: &str) -> NomResult<'_, String> {
     map(
         take_while1(|c: char| c.is_ascii_hexdigit() || matches!(c, 'x' | 'X' | 'z' | 'Z' | '_')),
         |s: &str| s.to_string(),

@@ -72,7 +72,7 @@ pub fn subckt<'a>(input: &'a str) -> NomResult<'a, Subckt> {
     })(input)
 }
 
-fn subckt_decl(input: &str) -> NomResult<(String, Vec<String>)> {
+fn subckt_decl(input: &str) -> NomResult<'_, (String, Vec<String>)> {
     context("subckt_decl", |input| {
         let (input, name) = context("name", hws(identifier))(input)?;
         let (input, ports) = context("ports", many0(hws(node)))(input)?;
@@ -87,7 +87,7 @@ fn subckt_decl(input: &str) -> NomResult<(String, Vec<String>)> {
 }
 
 /// Xname node1 node2 ... subckt_name
-pub fn instance(input: &str) -> NomResult<Instance> {
+pub fn instance(input: &str) -> NomResult<'_, Instance> {
     context("instance", |input| {
         let (input, name) = context("name", hws(identifier))(input)?;
 

@@ -23,12 +23,12 @@ pub fn load_str(source: &str) -> Result<Verilog, ParseError> {
     Ok(v)
 }
 
-pub fn verilog(input: &str) -> NomResult<Verilog> {
+pub fn verilog(input: &str) -> NomResult<'_, Verilog> {
     let (input, modules) = many0(hws(module))(input)?;
     Ok((input, Verilog { modules }))
 }
 
-pub fn module(input: &str) -> NomResult<Module> {
+pub fn module(input: &str) -> NomResult<'_, Module> {
     let (input, _) = hws(tag("module"))(input)?;
     let (input, name) = hws(identifier)(input).to_failure()?;
     let (input, port_names) = delimited(
@@ -89,7 +89,7 @@ enum ModuleItem {
     Instance(Instance),
 }
 
-pub fn port(input: &str) -> NomResult<Port> {
+pub fn port(input: &str) -> NomResult<'_, Port> {
     let (input, dir) = hws(hws(alt((
         map(tag("input"), |_| PortDirection::Input),
         map(tag("output"), |_| PortDirection::Output),
@@ -107,7 +107,7 @@ pub fn port(input: &str) -> NomResult<Port> {
     }))
 }
 
-pub fn range(input: &str) -> NomResult<Range> {
+pub fn range(input: &str) -> NomResult<'_, Range> {
     let (input, _) = hws(char('['))(input)?;
     let (input, msb) = unsigned_int(input).to_failure()?;
     let (input, _) = hws(char(':'))(input).to_failure()?;
@@ -116,7 +116,7 @@ pub fn range(input: &str) -> NomResult<Range> {
     Ok((input, Range { msb: msb as i32, lsb: lsb as i32 }))
 }
 
-pub fn parameter(input: &str) -> NomResult<Parameter> {
+pub fn parameter(input: &str) -> NomResult<'_, Parameter> {
     let (input, _) = hws(tag("parameter"))(input)?;
     let (input, name) = hws(identifier)(input)?;
     let (input, _) = hws(char('='))(input)?;
@@ -127,7 +127,7 @@ pub fn parameter(input: &str) -> NomResult<Parameter> {
     }))
 }
 
-pub fn net(input: &str) -> NomResult<Net> {
+pub fn net(input: &str) -> NomResult<'_, Net> {
     let (input, kind) = hws(alt((
         map(tag("wire"), |_| NetKind::Wire),
         map(tag("reg"), |_| NetKind::Reg),
@@ -142,7 +142,7 @@ pub fn net(input: &str) -> NomResult<Net> {
     }))
 }
 
-pub fn assign(input: &str) -> NomResult<Assign> {
+pub fn assign(input: &str) -> NomResult<'_, Assign> {
     let (input, _) = hws(tag("assign"))(input)?;
     let (input, lhs) = var_expr(input).to_failure()?; 
     let (input, _) = hws(char('='))(input).to_failure()?;
@@ -151,7 +151,7 @@ pub fn assign(input: &str) -> NomResult<Assign> {
     Ok((input, Assign { lhs, rhs }))
 }
 
-pub fn always(input: &str) -> NomResult<Always> {
+pub fn always(input: &str) -> NomResult<'_, Always> {
     let (input, _) = hws(tag("always"))(input)?;
     let (input, _) = hws(char('@'))(input).to_failure()?;
 
@@ -175,7 +175,7 @@ pub fn always(input: &str) -> NomResult<Always> {
     }))
 }
 
-pub fn sensitivity_event(input: &str) -> NomResult<SensitivityEvent> {
+pub fn sensitivity_event(input: &str) -> NomResult<'_, SensitivityEvent> {
     let (input, edge) = hws(opt(alt((
         map(tag("posedge"), |_| EdgeKind::Posedge),
         map(tag("negedge"), |_| EdgeKind::Negedge),
@@ -188,7 +188,7 @@ pub fn sensitivity_event(input: &str) -> NomResult<SensitivityEvent> {
     }))
 }
 
-pub fn instance(input: &str) -> NomResult<Instance> {
+pub fn instance(input: &str) -> NomResult<'_, Instance> {
     let (input, module_name) = hws(identifier)(input)?;
     let (input, instance_name) = hws(identifier)(input)?;
 
@@ -214,7 +214,7 @@ pub fn instance(input: &str) -> NomResult<Instance> {
 }
 
 /// 解析单个端口连接：.port(expr)
-pub fn connection(input: &str) -> NomResult<Connection> {
+pub fn connection(input: &str) -> NomResult<'_, Connection> {
     let (input, _) = hws(char('.'))(input)?;
     let (input, port) = hws(identifier)(input)?;
     let (input, expr) = delimited(hws(char('(')), expr, hws(char(')')))(input)?;
@@ -224,7 +224,7 @@ pub fn connection(input: &str) -> NomResult<Connection> {
     }))
 }
 
-pub fn stmts(input: &str) -> NomResult<Vec<Stmt>> {
+pub fn stmts(input: &str) -> NomResult<'_, Vec<Stmt>> {
     /*
         stmts := "begin" stmt* "end"
               | stmt
@@ -240,7 +240,7 @@ pub fn stmts(input: &str) -> NomResult<Vec<Stmt>> {
     ))(input)
 }
 
-pub fn stmt(input: &str) -> NomResult<Stmt> {
+pub fn stmt(input: &str) -> NomResult<'_, Stmt> {
     // TODO: case
     alt((   
         blocking_assign_stmt,
@@ -249,7 +249,7 @@ pub fn stmt(input: &str) -> NomResult<Stmt> {
     ))(input)
 }
 
-pub fn blocking_assign_stmt(input: &str) -> NomResult<Stmt> {
+pub fn blocking_assign_stmt(input: &str) -> NomResult<'_, Stmt> {
     let (input, lhs) = hws(var_expr)(input)?;
     let (input, _) = hws(tag("="))(input)?;
     let (input, rhs) = hws(expr)(input)?;
@@ -257,7 +257,7 @@ pub fn blocking_assign_stmt(input: &str) -> NomResult<Stmt> {
     Ok((input, Stmt::BlockingAssign { lhs, rhs }))
 }
     
-pub fn nonblocking_assign_stmt(input: &str) -> NomResult<Stmt> {
+pub fn nonblocking_assign_stmt(input: &str) -> NomResult<'_, Stmt> {
     let (input, lhs) = hws(var_expr)(input)?;
     let (input, _) = hws(tag("<="))(input)?;
     let (input, rhs) = hws(expr)(input)?;
@@ -265,7 +265,7 @@ pub fn nonblocking_assign_stmt(input: &str) -> NomResult<Stmt> {
     Ok((input, Stmt::NonBlockingAssign { lhs, rhs }))
 }
 
-pub fn if_stmt(input: &str) -> NomResult<Stmt> {
+pub fn if_stmt(input: &str) -> NomResult<'_, Stmt> {
     let (input, _) = hws(tag("if"))(input)?;
     let (input, cond) = delimited(hws(char('(')), expr, hws(char(')')))(input)?;
     let (input, then_body) = stmts(input)?;

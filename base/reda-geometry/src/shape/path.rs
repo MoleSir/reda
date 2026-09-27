@@ -86,7 +86,7 @@ impl<T: Copy> PointList<T> {
     }
 
     /// Shortcut for `self.points.iter()`.
-    pub fn iter(&self) -> Iter<Point<T>> {
+    pub fn iter(&self) -> Iter<'_, Point<T>> {
         self.points.iter()
     }
 

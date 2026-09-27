@@ -40,7 +40,7 @@ impl<T> Polyline<T> {
         self.points.is_empty()
     }
 
-    pub fn iter(&self) -> Iter<Point<T>> {
+    pub fn iter(&self) -> Iter<'_, Point<T>> {
         self.points.iter()
     }
 

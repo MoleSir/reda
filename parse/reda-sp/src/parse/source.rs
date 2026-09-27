@@ -7,7 +7,7 @@ use crate::{model::{AcCurrent, PulseVoltage, PwlVoltage, SineVoltage, Source, So
 use super::{angle_number, current_number, frequency_number, hws, identifier, node, number, time_number, voltage_number, NomResult, ToFailure};
 
 /// I/V<name> pos neg <value>
-pub fn source(input: &str) -> NomResult<Source> {
+pub fn source(input: &str) -> NomResult<'_, Source> {
     context("source", |input| {
         let (input, name) = context("name", hws(identifier))(input)?;
         let first_char = name.chars().next().unwrap_or_default().to_ascii_uppercase();
@@ -38,7 +38,7 @@ pub fn source(input: &str) -> NomResult<Source> {
     })(input)
 }
 
-pub fn source_value(input: &str, kind: SourceKind) -> NomResult<SourceValue> {
+pub fn source_value(input: &str, kind: SourceKind) -> NomResult<'_, SourceValue> {
     match kind {
         SourceKind::Voltage => context("source_value", alt((
             map(dc_voltage, SourceValue::DcVoltage),
@@ -57,7 +57,7 @@ pub fn source_value(input: &str, kind: SourceKind) -> NomResult<SourceValue> {
     }
 }
 
-pub fn dc_voltage(input: &str) -> NomResult<Voltage> {
+pub fn dc_voltage(input: &str) -> NomResult<'_, Voltage> {
     context("dc", |input| {
         let (input, opt_result) = opt(alt((
             hws(tag_no_case("DC=")),
@@ -74,7 +74,7 @@ pub fn dc_voltage(input: &str) -> NomResult<Voltage> {
     })(input)
 }
 
-pub fn dc_current(input: &str) -> NomResult<Current> {
+pub fn dc_current(input: &str) -> NomResult<'_, Current> {
     context("dc", |input| {
         let (input, opt_result) = opt(alt((
             hws(tag_no_case("DC=")),
@@ -91,7 +91,7 @@ pub fn dc_current(input: &str) -> NomResult<Current> {
     })(input)
 }
 
-pub fn ac_voltage(input: &str) -> NomResult<AcVoltage> {
+pub fn ac_voltage(input: &str) -> NomResult<'_, AcVoltage> {
     context("ac voltage", |input| {
         let (input, opt_result) = opt(alt((
             hws(tag_no_case("AC=")),
@@ -112,7 +112,7 @@ pub fn ac_voltage(input: &str) -> NomResult<AcVoltage> {
     })(input)
 } 
 
-pub fn ac_current(input: &str) -> NomResult<AcCurrent> {
+pub fn ac_current(input: &str) -> NomResult<'_, AcCurrent> {
     context("ac current", |input| {
         let (input, opt_result) = opt(alt((
             hws(tag_no_case("AC=")),
@@ -133,7 +133,7 @@ pub fn ac_current(input: &str) -> NomResult<AcCurrent> {
     })(input)
 } 
 
-pub fn sine_voltage(input: &str) -> NomResult<SineVoltage> {
+pub fn sine_voltage(input: &str) -> NomResult<'_, SineVoltage> {
     context("SIN", |input| {
         let (input, _) = hws(tag_no_case("SIN"))(input)?;
         let (input, _) = hws(char('('))(input).to_failure()?;
@@ -160,7 +160,7 @@ pub fn sine_voltage(input: &str) -> NomResult<SineVoltage> {
     })(input)
 }
 
-pub fn pwl_voltage(input: &str) -> NomResult<PwlVoltage> {
+pub fn pwl_voltage(input: &str) -> NomResult<'_, PwlVoltage> {
     context("PWL", |input| {
         let (input, _) = hws(tag_no_case("PWL"))(input)?;
         let (input, _) = hws(char('('))(input).to_failure()?;
@@ -185,7 +185,7 @@ pub fn pwl_voltage(input: &str) -> NomResult<PwlVoltage> {
     })(input)
 }
 
-pub fn pulse_voltage(input: &str) -> NomResult<PulseVoltage> {
+pub fn pulse_voltage(input: &str) -> NomResult<'_, PulseVoltage> {
     context("PULSE", |input| {
         let (input, _) = hws(tag_no_case("PULSE"))(input)?;
         let (input, _) = hws(char('('))(input).to_failure()?;

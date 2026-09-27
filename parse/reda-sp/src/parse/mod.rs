@@ -87,7 +87,7 @@ pub enum ParsedStatement {
     Model(Model),
 }
 
-fn statement(input: &str) -> NomResult<ParsedStatement> {
+fn statement(input: &str) -> NomResult<'_, ParsedStatement> {
     alt((
         map(component, ParsedStatement::Component),
         map(source, ParsedStatement::Source),

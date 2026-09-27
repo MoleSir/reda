@@ -8,7 +8,7 @@ use reda_unit::Number;
 use nom::branch::alt;
 use nom::combinator::map;
 
-pub fn component(input: &str) -> NomResult<Component> {
+pub fn component(input: &str) -> NomResult<'_, Component> {
     alt((
         map(resistor, Component::R),
         map(capacitor, Component::C),
@@ -20,7 +20,7 @@ pub fn component(input: &str) -> NomResult<Component> {
 }
 
 /// Rname N+ N- Value
-pub fn resistor(input: &str) -> NomResult<Resistor> {
+pub fn resistor(input: &str) -> NomResult<'_, Resistor> {
     context("resistor", |input| {
         let (input, name) = context("name", hws(identifier))(input)?;
         if !name.starts_with('R') && !name.starts_with('r') {
@@ -45,7 +45,7 @@ pub fn resistor(input: &str) -> NomResult<Resistor> {
 }
 
 /// Cname N+ N- Value <IC=Initial Condition>
-pub fn capacitor(input: &str) -> NomResult<Capacitor> {
+pub fn capacitor(input: &str) -> NomResult<'_, Capacitor> {
     context("capacitor", |input| {
         let (input, name) = context("name", hws(identifier))(input)?;
         if !name.starts_with('C') && !name.starts_with('c') {
@@ -71,7 +71,7 @@ pub fn capacitor(input: &str) -> NomResult<Capacitor> {
 }
 
 /// Lname N+ N- Value <IC=Initial Condition>
-pub fn inductor(input: &str) -> NomResult<Inductor> {
+pub fn inductor(input: &str) -> NomResult<'_, Inductor> {
     context("inductor", |input| {
         let (input, name) = context("name", hws(identifier))(input)?;
         if !name.starts_with('L') && !name.starts_with('l') {
@@ -97,7 +97,7 @@ pub fn inductor(input: &str) -> NomResult<Inductor> {
 }
 
 /// Dname N+ N- MODName
-pub fn diode(input: &str) -> NomResult<Diode> {
+pub fn diode(input: &str) -> NomResult<'_, Diode> {
     context("diode", |input| {
         let (input, name) = context("name", hws(identifier))(input)?;
         if !name.starts_with('D') && !name.starts_with('d') {
@@ -123,7 +123,7 @@ pub fn diode(input: &str) -> NomResult<Diode> {
 }
 
 /// Qname NC NB NE Model
-pub fn bjt(input: &str) -> NomResult<BJT> {
+pub fn bjt(input: &str) -> NomResult<'_, BJT> {
     context("bjt", |input| {
         let (input, name) = context("name", hws(identifier))(input)?;
         if !name.starts_with('Q') && !name.starts_with('q') {
@@ -151,7 +151,7 @@ pub fn bjt(input: &str) -> NomResult<BJT> {
 }
 
 /// Mname ND NG NS NB ModelName [params]
-pub fn mos_fet(input: &str) -> NomResult<MosFET> {
+pub fn mos_fet(input: &str) -> NomResult<'_, MosFET> {
     context("mosfet", |input| {
         let (input, name) = context("name", hws(identifier))(input)?;
         if !name.starts_with('M') && !name.starts_with('m') {
@@ -197,7 +197,7 @@ pub fn mos_fet(input: &str) -> NomResult<MosFET> {
 }
 
 /// .model <name> <type> (<param1=val1 param2=val2 ...>)
-pub fn model(input: &str) -> NomResult<Model> {
+pub fn model(input: &str) -> NomResult<'_, Model> {
     let (input, _) = context("keyword", hws(tag_no_case(".model")))(input)?;
     let (input, name) = hws(identifier)(input).to_failure()?;
     let (input, kind) = hws(model_kind)(input).to_failure()?;
@@ -213,7 +213,7 @@ pub fn model(input: &str) -> NomResult<Model> {
     }))
 }
 
-fn model_kind(input: &str) -> NomResult<ModelKind> {
+fn model_kind(input: &str) -> NomResult<'_, ModelKind> {
     map(
         hws(alt((
             tag_no_case("NPN"),
@@ -232,7 +232,7 @@ fn model_kind(input: &str) -> NomResult<ModelKind> {
 }
 
 /// Parse a key=value pair where key is identifier and value is Number
-fn parameter_pair(input: &str) -> NomResult<(String, Number)> {
+fn parameter_pair(input: &str) -> NomResult<'_, (String, Number)> {
     let (input, key) = hws(identifier)(input)?;
     let (input, _)   = hws(char('='))(input)?;
     let (input, val) = hws(number)(input)?;

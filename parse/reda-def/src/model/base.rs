@@ -216,24 +216,6 @@ pub enum DefPropertyType {
     Layer,
 }
 
-#[derive(Debug, Clone)]
-pub struct DefPropertyDefinition {
-    pub prop_type: DefPropertyType,
-    pub name: String,
-    pub data_type: DefPropertyDataType,
-}
-
-/// Data type of a property value.
-#[derive(Clone, Debug)]
-pub enum DefPropertyDataType {
-    /// Integer number.
-    Integer,
-    /// Floating point number.
-    Real,
-    /// String.
-    String,
-}
-
 /// Value of a Def/DEF property.
 #[derive(Clone, Debug)]
 pub enum DefPropertyValue {
@@ -243,29 +225,6 @@ pub enum DefPropertyValue {
     Real(f64),
     /// Quoted ASCII string.
     String(String),
-}
-
-impl FromStr for DefPropertyDataType {
-    type Err = ();
-
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input {
-            "INTEGER" => Ok(Self::Integer),
-            "REAL" => Ok(Self::Real),
-            "STRING" => Ok(Self::String),
-            _ => Err(()),
-        }
-    }
-}
-
-impl fmt::Display for DefPropertyDataType {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Integer => f.write_str("INTEGER"),
-            Self::Real => f.write_str("REAL"),
-            Self::String => f.write_str("STRING"),
-        }
-    }
 }
 
 impl fmt::Display for DefPropertyValue {

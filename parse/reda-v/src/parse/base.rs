@@ -26,7 +26,7 @@ impl<T, E> ToFailure<T, E> for Result<T, nom::Err<E>> {
 }
 
 /// 单行注释: // ...
-fn line_comment(input: &str) -> NomResult<()> {
+fn line_comment(input: &str) -> NomResult<'_, ()> {
     value(
         (),
         preceded(tag("//"), alt((not_line_ending, eof))),
@@ -34,12 +34,12 @@ fn line_comment(input: &str) -> NomResult<()> {
 }
 
 /// 多行注释: /* ... */
-fn block_comment(input: &str) -> NomResult<()> {
+fn block_comment(input: &str) -> NomResult<'_, ()> {
     value((), delimited(tag("/*"), take_until("*/"), tag("*/")))(input)
 }
 
 /// 跳过空白或注释
-pub fn ws0(input: &str) -> NomResult<()> {
+pub fn ws0(input: &str) -> NomResult<'_, ()> {
     value(
         (),
         many0(alt((
@@ -87,8 +87,8 @@ macro_rules! wrap_parser {
 
 // typical string
 // ie. abcdef, de234, jkl_mn, ...
-pub fn identifier(input: &str) -> NomResult<&str> {
-    pub fn _identifier(input: &str) -> NomResult<&str> {
+pub fn identifier(input: &str) -> NomResult<'_, &str> {
+    pub fn _identifier(input: &str) -> NomResult<'_, &str> {
         recognize(pair(
             alt((alpha1, tag("_"))),
             many0(alt((alphanumeric1, tag("_"), tag(".")))),
@@ -99,8 +99,8 @@ pub fn identifier(input: &str) -> NomResult<&str> {
 
 // unsigned integer number
 // ie, 100, 350
-pub fn unsigned_int(input: &str) -> NomResult<u32> {
-    pub fn _unsigned_int(input: &str) -> NomResult<u32> {
+pub fn unsigned_int(input: &str) -> NomResult<'_, u32> {
+    pub fn _unsigned_int(input: &str) -> NomResult<'_, u32> {
         let str_parser = recognize(digit1);
         map_res(
             str_parser,
@@ -110,8 +110,8 @@ pub fn unsigned_int(input: &str) -> NomResult<u32> {
     wrap_parser!(_unsigned_int(input), input, "unsigned_int")
 }
 
-pub fn integer(input: &str) -> NomResult<i32> {
-    pub fn _integer(input: &str) -> NomResult<i32> {
+pub fn integer(input: &str) -> NomResult<'_, i32> {
+    pub fn _integer(input: &str) -> NomResult<'_, i32> {
         let parser = tuple((
             opt(one_of("+-")),   // 符号
             digit1,              // 数字部分
